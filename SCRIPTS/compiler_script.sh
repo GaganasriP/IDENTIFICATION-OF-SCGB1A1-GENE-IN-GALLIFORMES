@@ -39,3 +39,4 @@ done
 done
 echo "$dir $mdl $fgspecies $bgspecies $om0 $lnlm0 $npm0 $ombnfg $ombnbg $lnlbn $npbn $ombffg $ombfbg $lnlbf $npbf" |sed 's/ /\t/g'  >> ../compiled_result.txt
 done 
+
