@@ -1,4 +1,4 @@
-echo  "dir mdl fgspecies bgspecies om0 lnlm0 npm0 ombnfg ombnbg lnlbn npbn ombffg ombfbg lnlbf npbf" |sed 's/ /\t/g' > compiled_result.txt
+echo  "mdl fgspecies bgspecies om0 lnlm0 npm0 ombnfg ombnbg lnlbn npbn ombffg ombfbg lnlbf npbf" |sed 's/ /\t/g' > compiled_result.txt
 
 for i in `grep ">" APOC1_ORFout_gbgc.fasta_PRANK.aln |sed 's/>//g'` 
 do 
@@ -37,6 +37,6 @@ lnlm0=`grep "lnL" $z.out|awk '{print $4}' FS=':'|awk '{print $1}' FS=')'|awk '{p
 npm0=`grep "lnL" $z.out|awk '{print $3}' FS=':'|awk '{print $1}' FS=')'|awk '{print $1}'`
 done
 done
-echo "$dir $mdl $fgspecies $bgspecies $om0 $lnlm0 $npm0 $ombnfg $ombnbg $lnlbn $npbn $ombffg $ombfbg $lnlbf $npbf" |sed 's/ /\t/g'  >> compiled_result.txt
+echo "$mdl $fgspecies $bgspecies $om0 $lnlm0 $npm0 $ombnfg $ombnbg $lnlbn $npbn $ombffg $ombfbg $lnlbf $npbf" |sed 's/ /\t/g'  >> compiled_result.txt
 done 
 
