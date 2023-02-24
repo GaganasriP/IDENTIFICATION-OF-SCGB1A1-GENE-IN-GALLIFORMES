@@ -66,4 +66,49 @@ codeml $x.ctl
 cp rst rst1 rub  2NG.t 2NG.dS 2NG.dN 4fold.nuc lnf $x
 cp $x.out $x
 
+## For M0 model
+
+##CREATING CONTROL FILES AND NEWICK FILES
+for m in M0
+do
+for cf in F3x4 F1x4
+do
+CF=`grep "$cf" cffile|cut -f1`
+x=`echo Chiroptera_"$cf"_"$m"`
+cp codeml.ctl "$x".ctl
+sed -i "s/ssssss/APOC1_ORFout_gbgc.fasta_PRANK.aln/g" $x.ctl
+sed -i "s/tttttt/SPECIES_APOC1_unrooted.nwk/g" $x.ctl
+sed -i "s/CF/$CF/g" $x.ctl
+sed -i "s/oooooo/$x.out/g" $x.ctl
+mdl=`grep "$m" model_details|awk '{print $2}'`
+FO=`grep "$m" model_details|awk '{print $3}'`
+OMG=`grep "$m" model_details|awk '{print $4}'`
+sed -i "s/mdl/$mdl/g" $x.ctl
+sed -i "s/FO/$FO/g" $x.ctl
+sed -i "s/OMG/$OMG/g" $x.ctl
+done
+done
+done
+
+##For creating folders 
+for m in M0
+do
+for cf in F3x4 F1x4
+do
+x=`echo Chiroptera_"$cf"_"$m"`
+mkdir $x
+done
+done
+
+##for running codeml
+for m in M0
+do
+for cf in F3x4 F1x4
+do
+x=`echo Chiroptera_"$cf"_"$m"`
+codeml $x.ctl
+cp rst rst1 rub  2NG.t 2NG.dS 2NG.dN 4fold.nuc lnf $x
+cp $x.out $x
+done
+done
 
