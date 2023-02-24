@@ -1,0 +1,26 @@
+
+
+
+echo -e "2\tF3x4" > cffile
+echo -e "3\tF61" >> cffile
+echo -e "M1vsM2\t1 2" > nssitesdetails
+echo -e "M7vsM8\t7 8" >> nssitesdetails
+
+## Create a demo control file > codeml_ns.ctl
+
+##CREATING CONTROL FILES AND NEWICK FILES 
+for cm in `echo F3x4 F61`
+do
+for m in `echo M1vsM2 M7vsM8`
+do
+cfreq=`grep "$cm" cffile_ns|cut -f1`
+x=`echo Chiroptera_"$cf"_"$m"`
+cp codeml_ns.ctl Chiroptera_"$cm"_"$m".ctl
+sed -i "s/ssssss/APOC1_ORFout_gbgc.fasta_PRANK.aln/g" $x.ctl
+sed -i "s/tttttt/SPECIES_APOC1_unrooted.nwk/g" $x.ctl
+sed -i "s/CF/$cfreq/g" $x.ctl
+sed -i "s/oooooo/$x.out/g" $x.ctl
+ns=`grep "$m" nssitesdetails|cut -f2`
+sed -i "s/nnnnnn/$ns/g" $x.ctl
+done
+done
