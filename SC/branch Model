@@ -1,4 +1,4 @@
-##### To run a branch model , a model_details file ,a cff file and alignment file 
+##### To run a branch model , a model_details file ,a cff file , a control file and alignment file 
 
 ## Creating model_details file & cff file
 echo -e "2\tF3x4" > cffile
@@ -7,10 +7,7 @@ echo -e 'M0\t0\t0\t0.4\nbfree\t2\t0\t0.4\nbneutral\t2\t1\t1' > model_details
 
 ## Create a demo control file > codeml.ctl
 
-##There are three models to be done :
-a)Bfree
-b)Bneutral
-c)M0
+##There are three models to be done : a)Bfree b)Bneutral c)M0
 
 ## for both bfree and bneutral the three sets of codes are to be run separately with manual changes near model 
 
