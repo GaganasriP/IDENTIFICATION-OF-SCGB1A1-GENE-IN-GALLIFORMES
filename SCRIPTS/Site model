@@ -42,7 +42,7 @@ for cm in `echo F3x4 F61`
 do
 for m in `echo M1vsM2 M7vsM8`
 do
-x=`echo APOC1_Chiroptera_"$cm"_"$m"`
+x=`echo Chiroptera_"$cm"_"$m"`
 codeml $x.ctl
 cp 2NG.t 2NG.dS 2NG.dN 4fold.nuc rub rst1 rst lnf $x
 cp $x.out $x
