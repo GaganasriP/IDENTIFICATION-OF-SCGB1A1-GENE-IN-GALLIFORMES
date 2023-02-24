@@ -1,0 +1,111 @@
+##### To run a branch model , a model_details file ,a cff file , a control file and alignment file 
+
+## Creating model_details file & cff file
+echo -e "2\tF3x4" > cffile
+echo -e "1\tF1x4" >> cffile
+echo -e 'M0\t0\t0\t0.4\nbfree\t2\t0\t0.4\nbneutral\t2\t1\t1' > model_details
+
+## Create a demo control file > codeml.ctl
+
+##There are three models to be done : a)Bfree b)Bneutral c)M0
+
+## for both bfree and bneutral the three sets of codes are to be run separately with manual changes near model 
+
+##CREATING CONTROL FILES AND NEWICK FILES 
+for i in `grep ">" APOC1_ORFout_gbgc.fasta_PRANK.aln |sed 's/>//g'`
+do
+sed "s/$i/$i #1/g" Unrooted_Chiro_APOC1.nwk > "$i"_APOC1_bfree.nwk
+for m in bneutral
+do
+for cf in F3x4 F1x4
+do
+CF=`grep "$cf" cffile|cut -f1`
+x=`echo "$i"_"$cf"_"$m"`
+cp codeml.ctl "$x".ctl
+sed -i "s/ssssss/APOC1_ORFout_gbgc.fasta_PRANK.aln/g" $x.ctl
+sed -i "s/tttttt/"$i"_APOC1_bneutral.nwk/g" $x.ctl
+sed -i "s/CF/$CF/g" $x.ctl
+sed -i "s/oooooo/$x.out/g" $x.ctl
+mdl=`grep "$m" model_details|awk '{print $2}'`
+FO=`grep "$m" model_details|awk '{print $3}'`
+OMG=`grep "$m" model_details|awk '{print $4}'`
+sed -i "s/mdl/$mdl/g" $x.ctl
+sed -i "s/FO/$FO/g" $x.ctl
+sed -i "s/OMG/$OMG/g" $x.ctl 
+done
+done
+done
+
+
+##For creating folders :
+for i in `grep ">" APOC2_primate_ORFout.fasta_PRANK.aln  |sed 's/>//g'`
+do
+for m in bfree 
+do
+for cf in F3x4 F1x4
+do
+x=`echo "$i"_"$cf"_"$m"`
+mkdir $x
+done
+done
+done
+
+
+#for running codeml
+for i in `grep ">" MYO7A_primate_ORFout.fasta_PRANK.aln |sed 's/>//g'`
+do
+for m in bfree 
+do
+for cf in F3x4 F1x4
+do
+x=`echo "$i"_"$cf"_"$m"`
+codeml $x.ctl
+cp rst rst1 rub  2NG.t 2NG.dS 2NG.dN 4fold.nuc lnf $x
+cp $x.out $x
+
+## For M0 model
+
+##CREATING CONTROL FILES AND NEWICK FILES
+for m in M0
+do
+for cf in F3x4 F1x4
+do
+CF=`grep "$cf" cffile|cut -f1`
+x=`echo Chiroptera_"$cf"_"$m"`
+cp codeml.ctl "$x".ctl
+sed -i "s/ssssss/APOC1_ORFout_gbgc.fasta_PRANK.aln/g" $x.ctl
+sed -i "s/tttttt/SPECIES_APOC1_unrooted.nwk/g" $x.ctl
+sed -i "s/CF/$CF/g" $x.ctl
+sed -i "s/oooooo/$x.out/g" $x.ctl
+mdl=`grep "$m" model_details|awk '{print $2}'`
+FO=`grep "$m" model_details|awk '{print $3}'`
+OMG=`grep "$m" model_details|awk '{print $4}'`
+sed -i "s/mdl/$mdl/g" $x.ctl
+sed -i "s/FO/$FO/g" $x.ctl
+sed -i "s/OMG/$OMG/g" $x.ctl
+done
+done
+done
+
+##For creating folders 
+for m in M0
+do
+for cf in F3x4 F1x4
+do
+x=`echo Chiroptera_"$cf"_"$m"`
+mkdir $x
+done
+done
+
+##for running codeml
+for m in M0
+do
+for cf in F3x4 F1x4
+do
+x=`echo Chiroptera_"$cf"_"$m"`
+codeml $x.ctl
+cp rst rst1 rub  2NG.t 2NG.dS 2NG.dN 4fold.nuc lnf $x
+cp $x.out $x
+done
+done
+
