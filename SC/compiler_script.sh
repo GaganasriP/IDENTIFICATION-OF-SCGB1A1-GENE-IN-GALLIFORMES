@@ -26,3 +26,16 @@ lnlbf=`grep "lnL" $bfree|awk '{print $4}' FS=':'|awk '{print $1}' FS=')'|awk '{p
 npbf=`grep "lnL" $bfree|awk '{print $3}' FS=':'|awk '{print $1}' FS=')'|awk '{print $1}'`
 done
 done
+for m in M0
+do
+for cf in F3x4 F1x4
+do
+x=`echo Chiroptera_"$cf"_"$m"`       
+mdl=`grep "Codon frequency model:" $m0|awk -F ":" '{print $2}'|awk '{print $1}'`
+om0=`grep "(dN/dS)" $m0|awk '{print $4}'`
+lnlm0=`grep "lnL" $m0|awk '{print $4}' FS=':'|awk '{print $1}' FS=')'|awk '{print $1}'`
+npm0=`grep "lnL" $m0|awk '{print $3}' FS=':'|awk '{print $1}' FS=')'|awk '{print $1}'`
+done
+done
+echo "$dir $mdl $fgspecies $bgspecies $om0 $lnlm0 $npm0 $ombnfg $ombnbg $lnlbn $npbn $ombffg $ombfbg $lnlbf $npbf" |sed 's/ /\t/g'  >> ../compiled_result.txt
+done 
