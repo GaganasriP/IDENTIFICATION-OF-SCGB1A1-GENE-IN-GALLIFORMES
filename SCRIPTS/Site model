@@ -1,8 +1,8 @@
+##### To run a site model , a model_details file ,a cff file , a control file , an alignment file and tree file(newick format) 
 
-
-
-echo -e "2\tF3x4" > cffile
-echo -e "3\tF61" >> cffile
+## Creating model_details file & cff file
+echo -e "2\tF3x4" > cffile_ns
+echo -e "3\tF61" >> cffile_ns
 echo -e "M1vsM2\t1 2" > nssitesdetails
 echo -e "M7vsM8\t7 8" >> nssitesdetails
 
@@ -14,8 +14,8 @@ do
 for m in `echo M1vsM2 M7vsM8`
 do
 cfreq=`grep "$cm" cffile_ns|cut -f1`
-x=`echo Chiroptera_"$cf"_"$m"`
-cp codeml_ns.ctl Chiroptera_"$cm"_"$m".ctl
+x=`echo Chiroptera_"$cm"_"$m"`
+cp codeml_ns.ctl $x.ctl
 sed -i "s/ssssss/APOC1_ORFout_gbgc.fasta_PRANK.aln/g" $x.ctl
 sed -i "s/tttttt/SPECIES_APOC1_unrooted.nwk/g" $x.ctl
 sed -i "s/CF/$cfreq/g" $x.ctl
@@ -24,3 +24,29 @@ ns=`grep "$m" nssitesdetails|cut -f2`
 sed -i "s/nnnnnn/$ns/g" $x.ctl
 done
 done
+
+##creating folders
+for cm in `echo F3x4 F61`
+do
+for m in `echo M1vsM2 M7vsM8` 
+do
+x=`echo Chiroptera_"$cm"_"$m"`
+mkdir $x
+done
+done
+
+
+#RUNNING CODEML
+
+for cm in `echo F3x4 F61`
+do
+for m in `echo M1vsM2 M7vsM8`
+do
+x=`echo APOC1_Chiroptera_"$cm"_"$m"`
+codeml $x.ctl
+cp 2NG.t 2NG.dS 2NG.dN 4fold.nuc rub rst1 rst lnf $x
+cp $x.out $x
+done
+done
+
+
