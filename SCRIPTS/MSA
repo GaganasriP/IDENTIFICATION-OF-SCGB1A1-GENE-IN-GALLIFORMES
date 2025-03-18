@@ -1,4 +1,4 @@
-MULTIPLE SEQUENCE ALIGNMENT:
+MULTIPLE SEQUENCE ALIGNMENT :
 
 #Guidance program using aligners: PRANK , MAFFT, MUSCLE,CLUSTALW
 for i in USH1C_primate_ORFout.fasta
