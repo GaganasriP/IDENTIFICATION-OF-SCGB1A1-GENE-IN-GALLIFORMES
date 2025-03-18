@@ -1,0 +1,76 @@
+BLAST :
+
+#Below script.sh is used;
+i="genome"
+j="species_name"
+#query sequence
+q="Gallus_scgb1a1.fa"
+blastn -task blastn -evalue 0.01 -db $i -out blastn_"$j"_DNA_"$i"_SCGB1A1."$q".out -num_threads 2 -outfmt 1 -query $q
+#run the script
+chmod 777 script.sh
+./script.sh
+
+GENE ANNOTATIONS :
+
+#To cut the headers of the sequences
+cut -d ":" -f2- APOC2_CHIROPTERA_transcript.fasta |sed 's/ />/1'|sed 's/ apo.*//g'|sed 's/ /_/g' > APOC2_CHIROPTERA_transcriptout.fasta
+
+OPEN READING FRAMES :
+
+#Finding ORFs of certain length 
+ORFfinder -s 0 -ml 100 -outfmt 1 -in APOC2_CHIROPTERA_transcriptout.fasta -out APOC2_CHIROPTERA_ORF.fasta
+sed 's/lcl|//g' APOC2_CHIROPTERA_ORF.fasta|sed "s/[:].*//" > APOC2_CHIROPTERA_ORF.fasta
+
+#Validation of ORFS through 2 scripts:
+1.  ORFvaidator.pl :
+#!/usr/bin/env perl
+use strict;
+use warnings;
+
+#This perl script will read in the multi-fasta file to verify validity of the ORF.
+#It will detect in-frame stop codons, DNA "ambiguity" characters other than N, lack of stop codon at the end of the sequence and lack of start codon at the beginning of start codon.
+
+my $orffile = $ARGV[0];
+my $counter=0;
+my $orfcount=0;
+my $header='';
+my $name;
+my $seq='';
+my $len;
+my $newseq;
+my %sequence;
+
+open(ORF, "$orffile") || die "File not found: '$orffile'.\n";
+while (<ORF>) {
+	chomp($_);
+	if ($_=~/^>(.*)/) {
+		if ($seq ne ""){$sequence{$header}=$seq;}
+		$header = $1;$counter++;$seq = '';
+	} else {$seq.=$_;}
+}
+$sequence{$header}=$seq;
+foreach $name (keys %sequence) {
+	$len = length($sequence{$name});
+	$newseq=substr($sequence{$name}, 0, -3);
+	if ($sequence{$name} =~ m/ATG(?:[ATGC]{3}(?<!TAG|TAA|TGA)){13,}(?:TAG|TAA|TGA)$/){$orfcount++;}
+	else{print "$name\n";}
+}
+print "$orfcount out of $counter sequences validated as ORFs.\n"
+
+2.   multifasta.pl:
+#!/usr/bin/perl
+$multifastafile = $ARGV[0];
+open(MULTIFASTA, "$multifastafile") || die "File not found: '$multifastafile'.\n";
+while (<MULTIFASTA>) {
+	chomp($_);
+	if ($_=~/^>(.*)/) {
+		if ($seq) {$sequence{$header}=$seq;}
+		$header = $1;$counter++;$seq    = '';
+	} else {$seq.=$_;}
+}
+$sequence{$header}=$seq;
+foreach $name (keys %sequence) {
+$len = length($sequence{$name});
+$newseq=substr($sequence{$name}, 0, -3);
+if ($sequence{$name} =~ /^ATG(?:[ATGC]{3})*?(?:TAA|TAG|TGA)$/) {print ">$name\n$newseq\n";}
+}
