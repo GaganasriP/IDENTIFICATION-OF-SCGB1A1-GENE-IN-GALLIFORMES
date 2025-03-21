@@ -1,0 +1,24 @@
+#likelihood comparison :
+echo 'b<-read.table("compiled_result.txt",header=F,skip=1,sep="\t")' > likelihood.r
+echo 'd<-as.data.frame(matrix(ncol = 15, nrow = 0))' >> likelihood.r
+echo 'colnames(d)<-colnames(b)' >> likelihood.r
+echo 'l=dim(b)[1]' >> likelihood.r
+echo 'for (i in seq (1,l,1)){' >> likelihood.r
+echo 'c=b[i,]' >> likelihood.r
+echo 'c$pvalm0_bfree<-pchisq(2*(c$V14-c$V6),df=c$V15-c$V7,lower.tail=F)' >> likelihood.r
+echo 'c$pavalbne_bfree<-pchisq(2*(c$V14-c$V10),df=c$V15-c$V11,lower.tail=F)' >> likelihood.r
+echo 'd<-rbind(d,c)' >> likelihood.r
+echo '}' >> likelihood.r
+echo 'write.table(d,file="Final_result.txt",quote=F,sep="\t",col.names=F,row.names=F)' >> likelihood.r
+Rscript likelihood.r
+
+#For inference:
+a=read.table("compiled_result.txt",header=T)
+a$pvalbfmo=pchisq(2*(a$lnlbf-a$lnlm0),df=1,lower.tail=F)
+a$pvalbfbn=pchisq(2*(a$lnlbf-a$lnlbn),df=1,lower.tail=F)
+a$inference[a$ombffg > a$ombfbg & a$pvalbfmo < 0.05] <- "relaxed_selection"
+a$inference[a$ombffg < a$ombfbg & a$pvalbfmo < 0.05] <- "intensification_of_purifying_selection"
+a$inference[a$ombffg > a$ombfbg & a$pvalbfbn > 0.05] <- "relaxed_selection"
+a$inference[a$ombffg > 1 & a$pvalbfbn < 0.05] <- "positive_selection"
+a$inference[a$pvalbfmo > 0.05] <- "nonsignificant"
+write.table(a,file="result_with_inference.txt",quote=F,row.names=F,sep="\t")
